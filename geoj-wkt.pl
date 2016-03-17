@@ -16,7 +16,8 @@ my $browser = LWP::UserAgent->new;
 
 while (<>) {
     chomp;
-    next unless /\w+/;
+    #ignore comments and blank lines
+    next unless ( ( /\w+/ ) or ( /^\s*#/) );
     my ( $url, $townland ) = split(/\|/);
     say "Using:", "$url for $townland";
     my $response = $browser->get( 'http://www.townlands.ie' . $url );
