@@ -63,11 +63,11 @@ sub  unfold {
     }
 
     # Callbacks for edit_utf8
-    my $mercator_ize
+    my $de_mercator_ize
         = sub { s/(-?\d+\.\d+)\s(-?\d+\.\d+)\,/&to_merc($1,$2)/ge; };
     my $chomp_last_comma = sub { chop; chop };
 
-    $path->edit_utf8($mercator_ize);
+    $path->edit_utf8($de_mercator_ize);
     $path->edit_utf8($chomp_last_comma);
     $path->append_utf8('))');
 
