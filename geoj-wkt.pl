@@ -23,6 +23,8 @@ while  (<>) {
     
     my ( $url, $townland ) = split(/\|/);
     say "Using:", "$url for $townland";
+    
+    #Get the townland page
     my $response = $browser->get( 'http://www.townlands.ie' . $url );
     die "Can't get $url -- ", $response->status_line
         unless $response->is_success;
@@ -33,8 +35,9 @@ while  (<>) {
     $geojson =~ s/\'/"/g;    # Make double-quotes for strict parser
     say "Got GeoJSON for $townland";
     
-    my $path      = path("./wkt-output/$townland.wkt");
     my $json_text = decode_json $geojson;
+    my $path      = path("./wkt-output/$townland.wkt");
+    
     unfold( $json_text, $path );
 }
 
@@ -63,11 +66,21 @@ sub  unfold {
     }
 
     # Callbacks for edit_utf8
+<<<<<<< Updated upstream
     my $de_mercator_ize
+=======
+    my $demercator_ize
+>>>>>>> Stashed changes
         = sub { s/(-?\d+\.\d+)\s(-?\d+\.\d+)\,/&to_merc($1,$2)/ge; };
+    
     my $chomp_last_comma = sub { chop; chop };
 
+<<<<<<< Updated upstream
     $path->edit_utf8($de_mercator_ize);
+=======
+    #In place edits
+    $path->edit_utf8($demercator_ize);
+>>>>>>> Stashed changes
     $path->edit_utf8($chomp_last_comma);
     $path->append_utf8('))');
 
