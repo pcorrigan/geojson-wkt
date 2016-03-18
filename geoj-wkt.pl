@@ -50,7 +50,7 @@ sub unfold {
         }
     }
 
-    sub to_merc {
+    sub fix_projection {
         my ( $lat, $lon ) = @_;
 
         #say "lat is $lat and lon is $lon";
@@ -65,7 +65,7 @@ sub unfold {
     # Callbacks for edit_utf8
 
     my $demercator_ize
-        = sub { s/(-?\d+\.\d+)\s(-?\d+\.\d+)\,/&to_merc($1,$2)/ge; };
+        = sub { s/(-?\d+\.\d+)\s(-?\d+\.\d+)\,/&fix_projection($1,$2)/ge; };
 
     my $chomp_last_comma = sub { chop; chop };
 
