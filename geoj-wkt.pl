@@ -15,34 +15,33 @@ my $PI = atan2( 1, 1 ) * 4;
 my $browser = LWP::UserAgent->new;
 path("wkt-output")->mkpath;
 
-while  (<>) {
+while (<>) {
     chomp;
-    
+
     #ignore comments and blank lines
-    next if (  /^\s*$/||/#/) ; 
-    
+    next if ( /^\s*$/ || /#/ );
+
     my ( $url, $townland ) = split(/\|/);
     say "Using:", "$url for $townland";
-    
+
     #Get the townland page
     my $response = $browser->get( 'http://www.townlands.ie' . $url );
     die "Can't get $url -- ", $response->status_line
         unless $response->is_success;
     my $townland_html = $response->content;
-    
+
     #Scrape
     my ($geojson) = $townland_html =~ /.*L.geoJson\((.*)\)\.addTo\(map\)/gsmx;
     $geojson =~ s/\'/"/g;    # Make double-quotes for strict parser
     say "Got GeoJSON for $townland";
-    
+
     my $json_text = decode_json $geojson;
     my $path      = path("./wkt-output/$townland.wkt");
-    
+
     unfold( $json_text, $path );
 }
 
-
-sub  unfold {
+sub unfold {
     my ( $js, $path ) = @_;
     $path->spew_utf8( $js->{geometry}->{type}, "((\n" );
     for my $coord_set ( @{ $js->{geometry}->{coordinates} } ) {
@@ -51,9 +50,7 @@ sub  unfold {
         }
     }
 
-#-9.8815003 53.2977326, -9.8812643 53.2981558, -9.8808029 53.298284, -9.8802772 53.298502, -9.8798803 53.2984892, -9.8796764 53.2982904, -9.8796335 53.2981173, -9.8796442 53.2979826
-
-    sub  to_merc {
+    sub to_merc {
         my ( $lat, $lon ) = @_;
 
         #say "lat is $lat and lon is $lon";
@@ -66,21 +63,15 @@ sub  unfold {
     }
 
     # Callbacks for edit_utf8
-<<<<<<< Updated upstream
-    my $de_mercator_ize
-=======
+
     my $demercator_ize
->>>>>>> Stashed changes
         = sub { s/(-?\d+\.\d+)\s(-?\d+\.\d+)\,/&to_merc($1,$2)/ge; };
-    
+
     my $chomp_last_comma = sub { chop; chop };
 
-<<<<<<< Updated upstream
-    $path->edit_utf8($de_mercator_ize);
-=======
     #In place edits
     $path->edit_utf8($demercator_ize);
->>>>>>> Stashed changes
+
     $path->edit_utf8($chomp_last_comma);
     $path->append_utf8('))');
 
