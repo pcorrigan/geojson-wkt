@@ -43,7 +43,7 @@ while (<>) {
 
 sub unfold {
     my ( $js, $path ) = @_;
-    $path->spew_utf8( $js->{geometry}->{type}, "((\n" );
+    $path->spew_utf8( 'GEOMETRYCOLLECTION (',$js->{geometry}->{type}, "((\n" );
     for my $coord_set ( @{ $js->{geometry}->{coordinates} } ) {
         for my $point (@$coord_set) {
             $path->append_utf8( join( " ", @$point ), ",\n" );
@@ -59,7 +59,7 @@ sub unfold {
         $y = $y * 20037508.34 / 180;
         $x = sprintf( "%.2f", ($x) );
         $y = sprintf( "%.2f", ($y) );
-        return "$x $y,";
+        return "$y $x,";
     }
 
     # Callbacks for edit_utf8
@@ -73,7 +73,7 @@ sub unfold {
     $path->edit_utf8($demercator_ize);
 
     $path->edit_utf8($chomp_last_comma);
-    $path->append_utf8('))');
+    $path->append_utf8(')))');
 
     say "$js->{properties}->{name} written to $path", "\n", '-' x 10, "\n";
 }
