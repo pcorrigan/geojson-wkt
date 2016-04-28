@@ -1,7 +1,8 @@
 #!/usr/bin/env perl
 use warnings;
 use strict;
-
+use Math::BigInt;
+use Math::BigFloat;
 # Dependencies
 use LWP;
 use JSON::XS;
@@ -61,11 +62,34 @@ sub unfold {
         $y = sprintf( "%.2f", ($y) );
         return "$y $x,";
     }
-
+# =(C2*20037508.34/180)&", "&(LN(TAN((90+D2)*PI()/360))/(PI()/180))*(20037508.34/180)
+    sub fix_projection_2 {
+        my ( $x, $y ) = @_;
+        my $lon = ($x / 20037508.34) * 180;
+        my $lat = ($y / 20037508.34) * 180;
+        #lat = 180/Math.PI * (2 * Math.Atan(Math.Exp(lat * Math.PI / 180)) - Math.PI / 2);
+        $lat = 180 / $PI * (2 * atan(exp($lat * $PI / 180))- $PI / 2);
+        $lat = sprintf( "%.2f", ($x) );
+        $lon = sprintf( "%.2f", ($y) );
+        return "$lon $lat"
+    }
+    
+    sub degrees_to_meters {
+        my ( $lon, $lat ) = @_;
+        my $x = ($lon * 20037508.34) / 180;
+        my $y = log(tan((90 + $lat) * $PI / 360)) / ($PI / 180);
+        $y = $y * 20037508.34 / 180;
+        return ("$x $y,")
+    }
+    
+    
+    
+    
+    
     # Callbacks for edit_utf8
 
     my $demercator_ize
-        = sub { s/(-?\d+\.\d+)\s(-?\d+\.\d+)\,/&fix_projection($1,$2)/ge; };
+        = sub { s/(-?\d+\.\d+)\s(-?\d+\.\d+)\,/&degrees_to_meters($1,$2)/ge; };
 
     my $chomp_last_comma = sub { chop; chop };
 
