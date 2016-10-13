@@ -1,7 +1,6 @@
-# Get Irish townland data for the Neatline geotemporal exhibits builder from townlands.ie
+# Get Irish townland data for the Neatline Geotemporal Exhibits builder from www.townlands.ie
 
-Converts to WKT, changing the projection from WGS84 Web Mercator aka EPSG:900913,
-(as used by OpenStreepMap & Google maps etc), to WGS 84 aka EPSG:4326 as used by GPS satellite navigation systems and Neatline, from Scholar Labs.
+This utility converts from the GeoJSON found on www.townlands.ie to EPSG:3857 encoded as [WKT] (https://en.wikipedia.org/wiki/Well-known_text) and suitable for import to Neatline
 
 ##Contents:
 
