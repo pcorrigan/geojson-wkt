@@ -17,7 +17,6 @@ path("wkt-output")->mkpath;
 
 while (<>) {
     chomp;
-
     #ignore comments and blank lines
     next if ( /^\s*$/ || /#/ );
 
@@ -60,13 +59,13 @@ sub unfold {
     }
     
     # Callbacks for edit_utf8
-    my $demercator_ize
+    my $wkt_ize
         = sub { s/(-?\d+\.\d+)\s(-?\d+\.\d+)\,/&degrees_to_meters($1,$2)/ge; };
 
     my $chomp_last_comma = sub { chop; chop };
 
     #In place edits
-    $path->edit_utf8($demercator_ize);
+    $path->edit_utf8($wkt_ize);
 
     $path->edit_utf8($chomp_last_comma);
     $path->append_utf8(')))');
